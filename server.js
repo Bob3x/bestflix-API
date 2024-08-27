@@ -18,19 +18,22 @@ http.createServer((request, response) => {
     });
 
     if (q.pathname.includes('documentation')) {
-        filePath = (__dirname + './documentation.html');
+        filePath = path.join(__dirname, 'documentation.html');
     } else {
-        filePath = 'index.html';
+        filePath = path.join(__dirname, 'index.html');
     }
 
     fs.readFile(filePath, (err, data) => {
-        if(err) {
-            throw err;
+        if (err) {
+            response.writeHead(404, { 'Content-Type': 'text/plain' });
+            response.end('404 Not Found');
+            return;
         }
         response.writeHead(200, { 'Content-Type': 'text/html' });
         response.write(data);
         response.end();
     });
+    
 }).listen(8080);
 console.log('Server running at http://localhost:8080/');
 
