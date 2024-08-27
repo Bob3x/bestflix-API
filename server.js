@@ -4,7 +4,7 @@ url = require('url');
 path = require('path');
  
 
-http.createServer((reuqest, response) => {
+http.createServer((request, response) => {
     let addr = request.url,
     q = new URL(addr, 'http://' + request.headers.host),
     filePath = '';
