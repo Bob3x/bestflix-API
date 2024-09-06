@@ -75,7 +75,7 @@ app.get('/movies/:title', (req, res) => {
 	const foundMovie = topMovies.find((m) => m.title === movieTitle);  // Loop through the array and find the movie title
 
 	if (!foundMovie) {
-		res.status(404).send('Movie not found.');
+		return res.status(404).send('Movie not found.');
 	}
 
 	res.json(foundMovie);
@@ -87,10 +87,10 @@ app.get('/movies/:director', (req, res) => {
 
   console.log(movieDirector);
 
-  const foundDirector = topMovies.findIndex((m) => m.director === movieDirector);  // Loop through the array and find the director
+  const foundDirector = topMovies.find((m) => m.director === movieDirector);  // Loop through the array and find the director
 
 	if (!foundDirector) {
-		res.status(404).send('Director not found.');
+		return res.status(404).send('Director not found.');
 	}
 
 	res.json(foundDirector);
@@ -101,10 +101,10 @@ app.get('/movies/:genres', (req, res) => {
 
 	console.log(movieGenre);
 
-	const foundGenre = topMovies.findIndex((m) => m.genre === movieGenre);  	// Loop through the array and find the matching genre
+	const foundGenre = topMovies.find((m) => m.genre === movieGenre);  	// Loop through the array and find the matching genre
 
 	if (!foundGenre) {
-		res.status(404).send('Genre not found.');
+		return res.status(404).send('Genre not found.');
 	}
 
 	res.json(foundGenre.genre);
@@ -116,10 +116,10 @@ app.get('/movies/:year', (req, res) => {
 
 	console.log(movieYear);
 
-	const foundYear = topMovies.findIndex((m) => m.year === movieYear);   	// Loop through the array and find the matching year
+	const foundYear = topMovies.find((m) => m.year === movieYear);   	// Loop through the array and find the matching year
 
 	if (!foundYear) {
-		res.status(404).send('Year not found.');
+		return res.status(404).send('Year not found.');
 	}
 
 	res.json(foundYear.year);
@@ -127,7 +127,7 @@ app.get('/movies/:year', (req, res) => {
 
 // Create new user
 app.post('/users', (req, res) => {
-	res.send('User created successfully.');
+	return res.send('User created successfully.');
 });
 
 // Update user
@@ -151,4 +151,4 @@ app.use((err, req, res, next) => {
 // listen for requests
 app.listen(8080, () => {
   console.log('Your app is listening on port 8080.');
-}):
+});
