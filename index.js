@@ -4,8 +4,23 @@ const path = require('path');
 
 const app = express();
 
+// List  of users
+let users = [
+  {
+    id: 1,
+    name: "Bobb",
+    favoriteMovies: []
+
+  },
+  {
+    id: 2,
+    name: "Sara",
+    favoriteMovies: ["The Gotfather"]
+  }
+]
+
 // List of movies
-const topMovies = [
+let topMovies = [
     {
       title: 'The Godfather',
       description: 'The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.',
@@ -68,11 +83,11 @@ app.get('/movies', (req, res) => {
 
 // GET movies by title
 app.get('/movies/:title', (req, res) => {
-	const movieTitle = req.params.title;  // Get the title from the request parameters
+	const { title } = req.params;  // Get the title from the request parameters
 
-  console.log(movieTitle);
+  console.log(title);
 
-	const foundMovie = topMovies.find((m) => m.title === movieTitle);  // Loop through the array and find the movie title
+	const foundMovie = topMovies.find((m) => m.title === title);  // Loop through the array and find the movie title
 
 	if (!foundMovie) {
 		return res.status(404).send('Movie not found.');
@@ -83,11 +98,11 @@ app.get('/movies/:title', (req, res) => {
 
 // GET movies by director
 app.get('/movies/:director', (req, res) => {
-	const movieDirector = req.params.director;   // Get the director from the request parameters
+	const { director } = req.params;   // Get the director from the request parameters
 
-  console.log(movieDirector);
+  console.log(director);
 
-  const foundDirector = topMovies.find((m) => m.director === movieDirector);  // Loop through the array and find the director
+  const foundDirector = topMovies.find((m) => m.director === director);  // Loop through the array and find the director
 
 	if (!foundDirector) {
 		return res.status(404).send('Director not found.');
@@ -96,12 +111,12 @@ app.get('/movies/:director', (req, res) => {
 	res.json(foundDirector);
 });
 
-app.get('/movies/:genres', (req, res) => {
-	const movieGenre = req.params.genre;  	// Get the genre from the request parameters
+app.get('/movies/:genre', (req, res) => {
+	const { genre } = req.params;  	// Get the genre from the request parameters
 
-	console.log(movieGenre);
+	console.log( genre );
 
-	const foundGenre = topMovies.find((m) => m.genre === movieGenre);  	// Loop through the array and find the matching genre
+	const foundGenre = topMovies.find((m) => m.genre === genre);  	// Loop through the array and find the matching genre
 
 	if (!foundGenre) {
 		return res.status(404).send('Genre not found.');
@@ -112,11 +127,11 @@ app.get('/movies/:genres', (req, res) => {
 
 app.get('/movies/:year', (req, res) => {
 	// Get the title from the request parameters
-	const movieYear = req.params.year;
+	const { year } = req.params;
 
-	console.log(movieYear);
+	console.log(year);
 
-	const foundYear = topMovies.find((m) => m.year === movieYear);   	// Loop through the array and find the matching year
+	const foundYear = topMovies.find((m) => m.year === year);   	// Loop through the array and find the matching year
 
 	if (!foundYear) {
 		return res.status(404).send('Year not found.');
