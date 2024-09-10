@@ -14,172 +14,109 @@
     and update it any time. </p>
 
     <h1>Documentation Page</h1>
-        <table>
-            <thead>
-                <tr>
-                    <th>Business Logic</th>
-                    <th>URL</th>
-                    <th>HTTP Method</th>
-                    <th>Query Parameters</th>
-                    <th>Request body data format</th>
-                    <th>Response body data format</th>
-                </tr>
-            </thead>
-            <tbody>
-                // GET all movies
-                <tr>
-                    <td>Return a list of ALL movies to the user</td>
-                    <td>/movies</td>
-                    <td>GET</td>
-                    <td>none</td>
-                    <td>none</td>
-                    <td>A JSON object with all movies</td>
-                </tr>
-                // GET a single movie
-                <tr>
-                    <td>
-                        Return parameters (title, director, genre, year) about a single movie by
-                        title to the user
-                    </td>
-                    <td>/movies/:title</td>
-                    <td>GET</td>
-                    <td>title (URL parameter)</td>
-                    <td>none</td>
-                    <td>
-                        Return movie by title
-                        Example: <br />
-                        {<br />
-                        &nbsp;&nbsp;title: 'The Godfather',<br />
-                        }
-                    </td>
-                </tr>
-                // GET a genre
-                <tr>
-                    <td>
-                        Return movie by genre (e.g. “Crime”)
-                    </td>
-                    <td>/genres/:genreName</td>
-                    <td>GET</td>
-                    <td>name (URL parameter)</td>
-                    <td>none</td>
-                    <td>
-                        Return movie by genre 
-                        Example: <br />
-                        {<br />
-                        &nbsp;&nbsp;genre: 'Crime',<br />
-                        }
-                    </td>
-                </tr>
-                // GET a director
-                <tr>
-                    <td>
-                        Return movie by director
-                    </td>
-                    <td>/movies/title/:directorName</td>
-                    <td>GET</td>
-                    <td>name (URL parameter)</td>
-                    <td>none</td>
-                    <td>
-                        Return movie by director's name 
-                        Example: <br />
-                        {<br />
-                        &nbsp;&nbsp;directorName: 'Frank Darabont',<br />
-                        }
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Return movie by year
-                    </td>
-                    <td>/movies/title/:directorName</td>
-                    <td>GET</td>
-                    <td>name (URL parameter)</td>
-                    <td>none</td>
-                    <td>Return movie by year 
-                        Example: <br />
-                        { <br /> &nbsp;&nbsp;year: 'Frank Darabont',<br /> }
-                    </td>
-                </tr>
-                // CREATE a new user
-                <tr>
-                    <td>Register a new user</td>
-                    <td>/users</td>
-                    <td>POST</td>
-                    <td>none</td>
-                    <td>
-                        Creating new user name. 
-                        Example: <br />
-                        {<br />
-                        &nbsp;&nbsp;new user: 'Janny Gold',<br />
-                        }
-                    </td>
-                    <td>A confirmation or an error message.</td>
-                </tr>
-                // UPDATE a user's name
-                <tr>
-                    <td>Allow users to update their username</td>
-                    <td>/users/:id</td>
-                    <td>PUT</td>
-                    <td>username (URL parameter)</td>
-                    <td>
-                        A JSON object holding updated data about the username.
-                        Example: <br />
-                        {<br />
-                        &nbsp;&nbsp;username: 'Mary Black'<br />
-                        }
-                    </td>
-                    <td>
-                        A confirmation message and updated user data or an error
-                        message. Example: <br />
-                        {<br />
-                        &nbsp;&nbsp;username: 'Mary Black',<br />
-                        }
-                    </td>
-                </tr>
-                POST a movie to list of favorites
-                <tr>
-                    <td>
-                        Allow users to add a movie to their list of favorites
-                    </td>
-                    <td>/users/:username/favorites</td>
-                    <td>POST</td>
-                    <td>username (URL parameter)</td>
-                    <td>
-                        A JSON object holding data about a favorite movie.
-                        Example: <br />
-                        {<br />
-                        &nbsp;&nbsp;title: 'Peter Jackson's King Kong'<br />
-                        }
-                    </td>
-                    <td>A confirmation or an error message.</td>
-                </tr>
-                // DELETE a movie from list of favorites
-                <tr>
-                    <td>
-                        Allow users to remove a movie of their list of favorites
-                    </td>
-                    <td>/users/:username/favorites/:movieTitle</td>
-                    <td>DELETE</td>
-                    <td>username (URL parameter), movieTitle (URL parameter)</td>
-                    <td>
-                        A JSON object holding data about a favorite movie to
-                        remove. Example: <br />
-                        {<br />
-                        &nbsp;&nbsp;title: 'Peter Jackson's King Kong'<br />
-                        }
-                    </td>
-                    <td>A confirmation or an error message.</td>
-                </tr>
-                // DELETE an existing user
-                <tr>
-                    <td>Allow existing users to deregister</td>
-                    <td>/users/:username/</td>
-                    <td>DELETE</td>
-                    <td>username (URL parameter)</td>
-                    <td>none</td>
-                    <td>A confirmation or an error message.</td>
-                </tr>
-            </tbody>
-        </table>
+    <h2>API Endpoints</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Request</th>
+                <th>URL</th>
+                <th>Description</th>
+                <th>Method</th>
+                <th>Query Parameters</th>
+                <th>Request Body</th>
+                <th>Response</th>
+            </tr>
+        </thead>
+        <tbody>
+               <!-- Get All Movies -->
+            <tr>
+                <td>Get All Movies</td>
+                <td>/movies</td>
+                <td>Returns a list of all movies to the user.</td>
+                <td>GET</td>
+                <td>None</td>
+                <td>None</td>
+                <td>JSON array of movie objects</td>
+            </tr>
+               <!-- Get Movie by Title -->
+            <tr>
+                <td>Get movie by title</td>
+                <td>/movies/:title</td>
+                <td>Returns movie by title.</td>
+                <td>GET</td>
+                <td>title (URL parameter)</td>
+                <td>None</td>
+            </tr>
+               <!-- Get Genre by Name -->
+            <tr>
+                <td>Get movie by genre </td>
+                <td>/genres/genres/:genreName</td>
+                <td>Return movie by genre.</td>
+                <td>GET</td>
+                <td>name (URL parameter)</td>
+                <td>None</td>
+            </tr>
+               <!-- Get Director by Name -->
+            <tr>
+                <td>Get movie by director's name.</td>
+                <td>/title/:directorName</td>
+                <td>Return movie by director's name.</td>
+                <td>GET</td>
+                <td>name (URL parameter)</td>
+                <td>None</td>
+            </tr>
+               <!-- Register User -->
+            <tr>
+                <td>Register new user</td>
+                <td>/users</td>
+                <td>Allows a new user to register.</td>
+                <td>POST</td>
+                <td>None</td>
+                <td>JSON object with user data (username, password, email, dateOfBirth)</td>
+                <td>Confirmation message or error message</td>
+            </tr>
+               <!-- Update User -->
+            <tr>
+                <td>Update exsiting user's name</td>
+                <td>/users/:id</td>
+                <td>Allows a user to update their personal information.</td>
+                <td>PUT</td>
+                <td>username (URL parameter)</td>
+                <td>Updated user data or confirmation message</td>
+            </tr>
+
+            <!-- Delete user -->
+            <tr>
+                <td>Deregister exsiting user</td>
+                <td>/users/:id</td>
+                <td>Allows an existing user to deregister.</td>
+                <td>DELETE</td>
+                <td>username (URL parameter)</td>
+                <td>None</td>
+                <td>Confirmation message or error message</td>
+            </tr>
+            
+               <!-- Add Movie to Favorites -->
+            <tr>
+                <td>Add movie to favorite movies</td>
+                <td>/users/:id/:movieTitle</td>
+                <td>Add a movie to a user's favorite movies.</td>
+                <td>POST</td>
+                <td>username (URL parameter)</td>
+                <td>JSON object with movie title</td>
+                <td>Updated list of favorite movies or confirmation message</td>
+            </tr>
+               <!-- Remove Movie from Favorites -->
+            <tr>
+                <td>Remove movie from favorite movies</td>
+                <td>/users/:id/:movieTitle</td>
+                <td>Remove a movie from favorite movies.</td>
+                <td>DELETE</td>
+                <td>username (URL parameter), movieTitle (URL parameter)</td>
+                <td>None</td>
+                <td>Updated list of favorite movies or confirmation message</td>
+            </tr>
+        </tbody>
+    </table>
 </body>
 </html>
