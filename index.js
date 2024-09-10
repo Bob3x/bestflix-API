@@ -184,6 +184,19 @@ app.delete('/users/:id/:movieTitle', (req, res) => {
   }
 });
 
+// DELETE
+app.delete('/users/:id', (req, res) => {
+  const { id, movieTitle } = req.params; 
+
+  let user = users.find(user => user.id == id);
+  if (user) { 
+    user.favoriteMovies = user.favoriteMovies.filter( title => title !== movieTitle )
+    res.status(200).send(`${movieTitle} has been removed from user ${id}'s array.`);
+  }else {
+    return res.status(400).send('User not found.'); 
+  }
+});
+
 
 // Delete user
 app.delete('/users/:username', (req, res) => {
