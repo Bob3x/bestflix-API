@@ -66,22 +66,22 @@ let topMovies = [
     },
 ];
 
-// GET requests
+// GET request welcome url
 app.get('/', (req, res) => {
   res.send('Welcome to my movie app!');
 });
 
-// GET the documentation file
+// GET documentation file
 app.get('/documentation', (req, res) => {                  
   res.sendFile('public/documentation.html', { root: __dirname });
 });
 
-// GET endpoint movies
+// GET all movies to the user
 app.get('/movies', (req, res) => {
   res.status(200).json(topMovies);
 });
 
-// GET movies by title
+// GET movie by title
 app.get('/movies/:title', (req, res) => {
 	const { title } = req.params;  // Get the title from the request parameters
 	const movie = topMovies.find(movie => movie.title === title);  // Loop through the array and find the movie title
@@ -93,47 +93,44 @@ app.get('/movies/:title', (req, res) => {
   }
 });
 
-// GET movies by director
+// GET movie by director
 app.get('/movies/title/:directorName', (req, res) => {
 	const { directorName } = req.params;   // Get the director from the request parameters
-
   const director = topMovies.find((m) => m.director === directorName);  // Loop through the array and find the director
 
 	if (!director) {
 		return res.status(400).send('Director not found.');
 	}
-
-	res.json(director);
+  res.json(director);
 });
 
+// GET movie by genre
 app.get('/movies/genres/:genreName', (req, res) => {
 	const { genreName } = req.params;  	// Get the genre from the request parameters
-
 	const genre = topMovies.find((m) => m.genre === genreName);  	// Loop through the array and find the matching genre
-
-	if (!genre) {
+	
+  if (!genre) {
 		return res.status(400).send('Genre not found.');
 	}
-
 	res.json(genre);
 });
 
+// GET movie by year
 app.get('/movies/years/:yearMovie', (req, res) => {
 	// Get the title from the request parameters
 	const { yearMovie } = req.params;
-
 	const year = topMovies.find((m) => m.year === yearMovie);   	// Loop through the array and find the matching year
-
-	if (!year) {
+	
+  if (!year) {
 		return res.status(400).send('Year not found.');
 	}
-
 	res.json(year);
 });
 
 // Create new user
 app.post('/users', (req, res) => {
   const newUser = req.body;
+  
   if (newUser.name) {
     newUser.id = uuid.v4();
     users.push(newUser);
@@ -141,7 +138,6 @@ app.post('/users', (req, res) => {
   } else {
     return res.status(400).send('Users need names.');
   }
-	
 });
 
 // Update user
@@ -149,6 +145,7 @@ app.put('/users/:id', (req, res) => {
   const { id } = req.params; 
   const updatedUser = req.body;
   let user = users.find(user => user.id == id);
+  
   if (user) { 
     user.name = updatedUser.name;
     res.status(200).json(user)
@@ -158,11 +155,24 @@ app.put('/users/:id', (req, res) => {
   }
 });
 
-// POST
+// DELETE user
+app.delete('/users/:id', (req, res) => {
+  const { id } = req.params; 
+  let user = users.find(user => user.id == id);
+  
+  if (user) { 
+    users = users.filter( user => user.id != id );
+    res.status(200).send(`User ${id} has been deleted.`);
+  }else {
+    return res.status(400).send('User not found.'); 
+  }
+});
+
+// POST favorite movie
 app.post('/users/:id/:movieTitle', (req, res) => {
   const { id, movieTitle } = req.params; 
-
   let user = users.find(user => user.id == id);
+  
   if (user) { 
     user.favoriteMovies.push(movieTitle);
     res.status(200).send(`${movieTitle} has been added to user ${id}'s array.`);
@@ -171,44 +181,17 @@ app.post('/users/:id/:movieTitle', (req, res) => {
   }
 });
 
-// DELETE
+// DELETE favorite movie
 app.delete('/users/:id/:movieTitle', (req, res) => {
   const { id, movieTitle } = req.params; 
-
   let user = users.find(user => user.id == id);
+  
   if (user) { 
     user.favoriteMovies = user.favoriteMovies.filter( title => title !== movieTitle )
     res.status(200).send(`${movieTitle} has been removed from user ${id}'s array.`);
   }else {
     return res.status(400).send('User not found.'); 
   }
-});
-
-// DELETE
-app.delete('/users/:id', (req, res) => {
-  const { id, movieTitle } = req.params; 
-
-  let user = users.find(user => user.id == id);
-  if (user) { 
-    user.favoriteMovies = user.favoriteMovies.filter( title => title !== movieTitle )
-    res.status(200).send(`${movieTitle} has been removed from user ${id}'s array.`);
-  }else {
-    return res.status(400).send('User not found.'); 
-  }
-});
-
-
-// Delete user
-app.delete('/users/:username', (req, res) => {
-	const username = req.params.username;
-
-	res.send(`User ${username} delete successfully.`);
-});
-
-// Error-handling middleware
-app.use((err, req, res, next) => {
-	console.error('Error:', err.stack);
-	res.status(500).send('Something broke!');
 });
 
 // listen for requests
