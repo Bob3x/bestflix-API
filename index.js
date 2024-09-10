@@ -1,8 +1,12 @@
 const express = require('express');
 const morgan = require('morgan');
-const path = require('path');
+const bodyParser = require('body-parser');
+const uuid = require('uuid');
 
 const app = express();
+app.use(morgan('combined'));        // Morgan middleware to log all requests to the terminal
+app.use(express.static('public'));  // Serve static files from the "public" directory
+app.use(bodyParser.json());
 
 // List  of users
 let users = [
@@ -63,9 +67,6 @@ let topMovies = [
     },
 ];
 
-app.use(morgan('combined'));        // Morgan middleware to log all requests to the terminal
-app.use(express.static('public'));  // Serve static files from the "public" directory
-
 // GET requests
 app.get('/', (req, res) => {
   res.send('Welcome to my movie app!');
@@ -78,51 +79,44 @@ app.get('/documentation', (req, res) => {
 
 // GET endpoint movies
 app.get('/movies', (req, res) => {
-  res.json(topMovies);
+  res.status(200).json(topMovies);
 });
 
 // GET movies by title
 app.get('/movies/:title', (req, res) => {
 	const { title } = req.params;  // Get the title from the request parameters
+	const movie = topMovies.find(movie => movie.title === title);  // Loop through the array and find the movie title
 
-  console.log(title);
-
-	const foundMovie = topMovies.find((m) => m.title === title);  // Loop through the array and find the movie title
-
-	if (!foundMovie) {
-		return res.status(404).send('Movie not found.');
-	}
-
-	res.json(foundMovie);
+	if (movie) {
+	  res.status(200).json(movie);
+	} else {
+    return res.status(400).send('Movie not found.');
+  }
 });
 
 // GET movies by director
-app.get('/movies/:director', (req, res) => {
-	const { director } = req.params;   // Get the director from the request parameters
+app.get('/movies/directors/:directorName', (req, res) => {
+	const { directorName } = req.params;   // Get the director from the request parameters
 
-  console.log(director);
+  const director = topMovies.find((m) => m.director === directorName).director;  // Loop through the array and find the director
 
-  const foundDirector = topMovies.find((m) => m.director === director);  // Loop through the array and find the director
-
-	if (!foundDirector) {
-		return res.status(404).send('Director not found.');
+	if (!director) {
+		return res.status(400).send('Director not found.');
 	}
 
-	res.json(foundDirector);
+	res.json(director);
 });
 
-app.get('/movies/:genre', (req, res) => {
-	const { genre } = req.params;  	// Get the genre from the request parameters
+app.get('/movies/genres/:genreName', (req, res) => {
+	const { genreName } = req.params;  	// Get the genre from the request parameters
 
-	console.log( genre );
+	const genre = topMovies.find((m) => m.genre === genreName).genre;  	// Loop through the array and find the matching genre
 
-	const foundGenre = topMovies.find((m) => m.genre === genre);  	// Loop through the array and find the matching genre
-
-	if (!foundGenre) {
+	if (!genre) {
 		return res.status(404).send('Genre not found.');
 	}
 
-	res.json(foundGenre.genre);
+	res.json(genre);
 });
 
 app.get('/movies/:year', (req, res) => {
