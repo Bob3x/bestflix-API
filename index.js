@@ -8,6 +8,14 @@ app.use(morgan('combined'));        // Morgan middleware to log all requests to 
 app.use(express.static('public'));  // Serve static files from the "public" directory
 app.use(bodyParser.json());
 
+const mongoose = require('mongoose');
+const Models = require('./models.js');
+
+const Movies = Models.Movie;
+const Users = Models.User;
+
+mongoose.connect('mongodb://localhost:27017/myFlixDB', { useNewUrlParser: true, useUnfiedTopology: true });
+
 // List  of users
 let users = [
   {
@@ -177,7 +185,7 @@ app.post('/users/:id/:movieTitle', (req, res) => {
     user.favoriteMovies.push(movieTitle);
     res.status(200).send(`${movieTitle} has been added to user ${id}'s array.`);
   }else {
-    return res.status(400).send('User not found.'); 
+    return res.status(400).send('Movie not found.'); 
   }
 });
 
@@ -190,7 +198,7 @@ app.delete('/users/:id/:movieTitle', (req, res) => {
     user.favoriteMovies = user.favoriteMovies.filter( title => title !== movieTitle )
     res.status(200).send(`${movieTitle} has been removed from user ${id}'s array.`);
   }else {
-    return res.status(400).send('User not found.'); 
+    return res.status(400).send('Movie not found.'); 
   }
 });
 
