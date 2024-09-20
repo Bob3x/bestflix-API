@@ -4,9 +4,11 @@ const bodyParser = require('body-parser');
 const uuid = require('uuid');
 
 const app = express();
+app.use(express.json());
+app.use(express.urlencoded({ extended: true })); 
 app.use(morgan('combined'));        // Morgan middleware to log all requests to the terminal
 app.use(express.static('public'));  // Serve static files from the "public" directory
-app.use(bodyParser.json());
+
 
 const mongoose = require('mongoose');
 const Models = require('./models.js');
@@ -135,17 +137,31 @@ app.get('/movies/years/:yearMovie', (req, res) => {
 	res.json(year);
 });
 
-// Create new user
-app.post('/users', (req, res) => {
-  const newUser = req.body;
-  
-  if (newUser.name) {
-    newUser.id = uuid.v4();
-    users.push(newUser);
-    res.status(201).json(newUser);
-  } else {
-    return res.status(400).send('Users need names.');
-  }
+// Create new user in myFlixDB - MongoDB
+app.post('/users', async (req, res) => {
+  await Users.findOne({ Usernam: req.body.Username })
+    .then((user) => {
+      if (user) {
+        return res.status(400).send(req.body.Username + 'already exists'); // If the user already exists
+      } else {
+        Users
+          .create({                                                        // If not - create new user
+            Username: req.body.Username,
+            Password: req.body.Passowrd,
+            Email: req.body.Email,
+            Birthday: req.body.Birthday
+          })
+          .then((user) => {res.status(201).json(user)})
+          .catch((error) => {
+            console.error(error);
+            res.status(500).send('Error: ' + error);
+          })
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+      res.status(500).send('Error: ' + error);
+    });
 });
 
 // Update user
