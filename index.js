@@ -86,9 +86,16 @@ app.get('/documentation', (req, res) => {
   res.sendFile('public/documentation.html', { root: __dirname });
 });
 
-// GET all movies to the user
-app.get('/movies', (req, res) => {
-  res.status(200).json(topMovies);
+// GET all movies from the database to the user
+app.get('/movies', async (req, res) => {
+  await Movies.find()
+  .then ((movies) => {
+    res.status(200).json(movies);
+  })
+  .catch((err) => {
+  console.error(err);
+  res.status(500).send('Error: ' + err);
+  });
 });
 
 // GET movie by title
