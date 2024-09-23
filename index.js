@@ -18,7 +18,7 @@ const Users = Models.User;
 const Genres = Models.Genre;
 const Directors = Models.Director;
 
-mongoose.connect('mongodb://localhost:27017/myFlixDB', { useNewUrlParser: true, useUnfiedTopology: true });
+mongoose.connect('mongodb://localhost:27017/myFlixDB', { useNewUrlParser: true, useUnifiedTopology: true });
 
 // List  of users
 let users = [
@@ -103,8 +103,8 @@ app.get('/movies', async (req, res) => {
 // GET movie by title
 app.get('/movies/:Title', async (req, res) => {
 	await Movies.findOne({ Title: req.params.Title })
-  .then ((movies) => {
-    res.json(movies)
+  .then ((movie) => {
+    res.json(movie)
   })
   .catch((err) => {
     console.error(err);
@@ -112,11 +112,11 @@ app.get('/movies/:Title', async (req, res) => {
   });
 });
 
-// GET movie by directors name
+// GET movie by director's name
 app.get('/movies/Director/:Name', async (req, res) => {
-	await Directors.findOne({Director:{Name: req.params.Name}}) 
-  .then ((movies) => {
-    res.json(movies)
+	await Directors.findOne({ Director:{ Name: req.params.Name} }) 
+  .then ((Director) => {
+    res.json(Director)
   })
   .catch((err) => {
     console.error(err);
@@ -126,13 +126,24 @@ app.get('/movies/Director/:Name', async (req, res) => {
 
 // GET movie by genre
 app.get('/movies/Genre/:Name', async (req, res) => {
-	await Genres.findOne({Genre: {Name: req.params.Name}})
-  .then ((movies) => {
-    res.json(movies)
+	await Genres.findOne({ Name: req.params.Name })
+  .then ((Genre) => {
+    res.json(Genre)
   })
   .catch ((err) => {
     console.error(err);
     res.status(400).send('Genre not found.' + err);
+  });
+});
+
+app.get('/users', async (req, res) => {
+  await Users.find()
+  .then ((users) => {
+    res.status(200).json(users);
+  })
+  .catch((err) => {
+  console.error(err);
+  res.status(500).send('Error: ' + err);
   });
 });
 
