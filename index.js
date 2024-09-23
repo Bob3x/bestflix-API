@@ -15,6 +15,8 @@ const Models = require('./models.js');
 
 const Movies = Models.Movie;
 const Users = Models.User;
+const Genres = Models.Genre;
+const Directors = Models.Director;
 
 mongoose.connect('mongodb://localhost:27017/myFlixDB', { useNewUrlParser: true, useUnfiedTopology: true });
 
@@ -99,7 +101,7 @@ app.get('/movies', async (req, res) => {
 });
 
 // GET movie by title
-app.get('/movies/:Title', async (req, res)) => {
+app.get('/movies/:Title', async (req, res) => {
 	await Movies.findOne({ Title: req.params.Title })
   .then ((movies) => {
     res.json(movies)
@@ -112,7 +114,7 @@ app.get('/movies/:Title', async (req, res)) => {
 
 // GET movie by directors name
 app.get('/movies/Director/:Name', async (req, res) => {
-	await Movies.findOne({Director:{Name: req.params.Name}}) 
+	await Directors.findOne({Director:{Name: req.params.Name}}) 
   .then ((movies) => {
     res.json(movies)
   })
@@ -124,7 +126,7 @@ app.get('/movies/Director/:Name', async (req, res) => {
 
 // GET movie by genre
 app.get('/movies/Genre/:Name', async (req, res) => {
-	await Movies.findOne({Genre: {Name: req.params.Name}})
+	await Genres.findOne({Genre: {Name: req.params.Name}})
   .then ((movies) => {
     res.json(movies)
   })
