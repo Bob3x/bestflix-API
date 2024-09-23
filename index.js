@@ -136,13 +136,15 @@ app.get('/movies/Genre/:Name', async (req, res) => {
 
 // Create new user in myFlixDB - MongoDB
 app.post('/users', async (req, res) => {
-  await Users.findOne({ Usernam: req.body.Username })
+  await Users.findOne({ Username: req.body.Username })
     .then((user) => {
       if (user) {
-        return res.status(400).send(req.body.Username + 'already exists'); // If the user already exists
+        return res.status(400).send(req.body.Username + 'already exists');
+        // If the user already exists 
       } else {
         Users
-          .create({                                                        // If not - create new user
+        // If not - create new user
+          .create({                                                        
             Username: req.body.Username,
             Password: req.body.Passowrd,
             Email: req.body.Email,
@@ -199,30 +201,34 @@ app.delete('/users/:Username', async (req, res) => {
   });
 });
 
-// POST favorite movie
-app.post('/users/:id/:movieTitle', (req, res) => {
-  const { id, movieTitle } = req.params; 
-  let user = users.find(user => user.id == id);
-  
-  if (user) { 
-    user.favoriteMovies.push(movieTitle);
-    res.status(200).send(`${movieTitle} has been added to user ${id}'s array.`);
-  }else {
-    return res.status(400).send('Movie not found.'); 
-  }
+// UPDATE users favorite movies
+app.post('/users/:Username/movies/:MovieID', async (req, res) => {
+await Users.findOneAndUpdate({Username: req.params.Username}, {
+  $push: { favoriteMovies: req.params.MovieID }
+},
+{new: true})
+.then((updatedUser) => {
+  res.json(updatedUser)
+})
+.catch((error) => {
+  console.error(error);
+  res.status(500).send('No such movie' + error);
+  }); 
 });
 
 // DELETE favorite movie
-app.delete('/users/:id/:movieTitle', (req, res) => {
-  const { id, movieTitle } = req.params; 
-  let user = users.find(user => user.id == id);
-  
-  if (user) { 
-    user.favoriteMovies = user.favoriteMovies.filter( title => title !== movieTitle )
-    res.status(200).send(`${movieTitle} has been removed from user ${id}'s array.`);
-  }else {
-    return res.status(400).send('Movie not found.'); 
-  }
+app.delete('/users/:Username/movies/:MovieID', async (req, res) => {
+await Users.findOneAndUpdate({Username: req.params.Username}, {
+  $pull: { favoriteMovies: req.params.MovieID }
+},
+{new: true})
+.then((updatedUser) => {
+  res.json(updatedUser)
+})
+.catch((error) => {
+  console.error(error);
+  res.status(500).send('Movie not found' + error);
+  }); 
 });
 
 // listen for requests
