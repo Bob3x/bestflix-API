@@ -29,11 +29,11 @@
             <tr> <!-- Get all movies -->
                 <td>Get all movies to the user</td>
                 <td>/movies</td>
-                <td>Returns a list of all movies to the user.</td>
+                <td>Returns a list of all movies to the user</td>
                 <td>GET</td>
                 <td>None</td>
                 <td>None</td>
-                <td>JSON array of movie objects</td>
+                <td>Database with all available movies</td>
             </tr>
             <tr> <!-- Get movie by title -->
                 <td>Get movie by title</td>
@@ -44,9 +44,9 @@
                 <td>None</td>
             </tr>
             <tr> <!-- Get movie by director's name -->
-                <td>Get movie by director's name.</td>
+                <td>Get movie by director's name</td>
                 <td>movies/Director/:Name</td>
-                <td>Return movies by director's name.</td>
+                <td>Return movies by director's name</td>
                 <td>GET</td>
                 <td>movie's director's name (URL parameter)</td>
                 <td>None</td>
@@ -54,7 +54,7 @@
               <tr> <!-- Get movie by genre -->
                 <td>Get movie by genre </td>
                 <td>/movies/Genre/:Name</td>
-                <td>Return movie by genre.</td>
+                <td>Return movie by genre</td>
                 <td>GET</td>
                 <td>movies genre's name (URL parameter)</td>
                 <td>None</td>
@@ -62,33 +62,34 @@
             <tr> <!-- Register User -->
                 <td>Register new user</td>
                 <td>/users</td>
-                <td>Allows a new user to register.</td>
+                <td>Allows a new user to register</td>
                 <td>POST</td>
                 <td>None</td>
                 <td>JSON object with user data (username, password, email, birthday)</td>
-                <td>Confirmation message or error message</td>
+                <td>Confirmation message and/or error message</td>
             </tr>
             <tr> <!-- Update user -->
-                <td>Update exsiting user's info - username'</td>
+                <td>Update exsiting user's info - username</td>
                 <td>/users/:Username</td>
-                <td>Allows a user to update their personal information - username.</td>
+                <td>Allows a user to update their personal information - username</td>
                 <td>PUT</td>
-                <td>Username (URL parameter)</td>
-                <td>Updated Username or confirmation message</td>
+                <td>username (URL parameter)</td>
+                <td>JSON object with updated user's data</td>
+                <td>Updated username and/or confirmation message</td>
             </tr>
             <tr> <!-- Delete user -->
                 <td>Deregister exsiting user</td>
                 <td>/users/:Username</td>
-                <td>Allows an existing user to deregister.</td>
+                <td>Allows an existing user to deregister</td>
                 <td>DELETE</td>
-                <td>Username (URL parameter)</td>
+                <td>username (URL parameter)</td>
                 <td>None</td>
                 <td>Confirmation message or error message</td>
             </tr>
-            <tr> <!-- Add Movie to favorite movies -->
+            <tr> <!-- Add movie to favorite movies -->
                 <td>Add movie to user's favorite movies</td>
                 <td>/users/:Username/movies/:MovieID</td>
-                <td>Add a movie to a user's favorite movies.</td>
+                <td>Add a movie to a user's favorite movies</td>
                 <td>POST</td>
                 <td>user name (URL parameter)</td>
                 <td>JSON object with movie's title</td>
@@ -97,7 +98,7 @@
             <tr> <!-- Remove movie from favorite movies -->
                 <td>Remove movie from users's favorite movies</td>
                 <td>/users/:Username/movies/:MovieID</td>
-                <td>Remove a movie from favorite movies.</td>
+                <td>Remove a movie from favorite movies</td>
                 <td>DELETE</td>
                 <td>movie title (URL parameter)</td>
                 <td>None</td>
