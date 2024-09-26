@@ -5,7 +5,8 @@ const uuid = require('uuid');
 
 const app = express();
 app.use(express.json());
-app.use(express.urlencoded ({ extended: true })); 
+app.use(express.urlencoded ({ extended: true }));
+let auth = require('./auth.js')(app); 
 app.use(morgan('combined'));        // Morgan middleware to log all requests to the terminal
 app.use(express.static('public'));  // Serve static files from the "public" directory
 
@@ -68,7 +69,7 @@ app.get('/movies/Director/:Name', async (req, res) => {
 
 // GET movie by genre
 app.get('/movies/Genre/:Name', async (req, res) => {
-	await Genres.findOne({ 'Genre.Name': req.params.Name })
+	await Movies.findOne({ 'Genre.Name': req.params.Name })
   .then ((Genre) => {
     res.json(Genre)
   })
@@ -92,7 +93,7 @@ app.get('/users', async (req, res) => {
 
 // CREATE new user in myFlixDB - MongoDB
 app.post('/users', async (req, res) => {
-  await Users.findOne({ Username: req.body.Username })
+  await Users.findOne({ 'Username': req.body.Username })
     .then((user) => {
       if (user) {
         return res.status(400).send(req.body.Username + 'already exists');
@@ -121,7 +122,7 @@ app.post('/users', async (req, res) => {
 
 // UPDATE user's info by username
 app.put('/users/:Username', async (req, res) => {
-  await Users.findOneAndUpdate({Username: req.params.Username}, {
+  await Users.findOneAndUpdate({ 'Username': req.params.Username }, {
     $set:
     {
       Username: req.body.Username,
@@ -143,7 +144,7 @@ app.put('/users/:Username', async (req, res) => {
 
 // DELETE user by username
 app.delete('/users/:Username', async (req, res) => {
-  await Users.findOneAndRemove({Username: req.params.Username})
+  await Users.findOneAndRemove({'Username': req.params.Username})
   .then((user) => {
     if(!user) {
       res.status(400).send(req.params.Username + 'was not found.');
@@ -159,7 +160,7 @@ app.delete('/users/:Username', async (req, res) => {
 
 // UPDATE users favorite movies
 app.post('/users/:Username/movies/:MovieID', async (req, res) => {
-await Users.findOneAndUpdate({Username: req.params.Username}, {
+await Users.findOneAndUpdate({ 'Username': req.params.Username}, {
   $push: { FavoriteMovies: req.params.MovieID }
 },
 {new: true})
