@@ -9,10 +9,12 @@ let auth = require('./auth.js')(app);
 const passport = require('passport');
 require('./passport.js');
 const app = express();
+const { check, validationResult } = require('express-validator');
 app.use(express.json());
 app.use(express.urlencoded ({ extended: true }));
 app.use(morgan('combined'));        // Morgan middleware to log all requests to the terminal
 app.use(express.static('public'));  // Serve static files from the "public" directory
+
 
 const mongoose = require('mongoose');
 const Models = require('./models.js');
@@ -95,7 +97,17 @@ app.get('/users', async (req, res) => {
 });
 
 // CREATE new user in myFlixDB - MongoDB
-app.post('/users', async (req, res) => {
+app.post('/users', [
+  check('Username', 'Username is required.').isLength({min: 5}),
+  check('Username', 'Username contains non alphanumeric characters - not allowed.').isAlphanumeric(),
+  check('Password', 'Password is required.').not().isEmpty(),
+  check('Email', 'Email is not valid.').isEmail()
+], async (req, res) => {
+  let errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array()} );
+  }
   let hashedPassword = Users.hashPassword(req.body.Password);
   await Users.findOne({ 'Username': req.body.Username })
     .then((user) => {
@@ -193,6 +205,7 @@ await Users.findOneAndUpdate({Username: req.params.Username}, {
 });
 
 // listen for requests
-app.listen(8080, () => {
-  console.log('Your app is listening on port 8080.');
+const port = process.env.PORT || 8080;
+app.listen(port, '0 0 0 0', () => {
+  console.log('Listening on port ' + port);
 });
