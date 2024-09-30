@@ -6,7 +6,11 @@ const uuid = require('uuid');
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded ({ extended: true }));
+const cors = require('cors');
+app.use(cors());
 let auth = require('./auth.js')(app); 
+const passport = require('passport');
+require('./passport.js');
 app.use(morgan('combined'));        // Morgan middleware to log all requests to the terminal
 app.use(express.static('public'));  // Serve static files from the "public" directory
 
@@ -32,7 +36,7 @@ app.get('/documentation', (req, res) => {
 });
 
 // GET all movies from the database to the user
-app.get('/movies', async (req, res) => {
+app.get('/movies', passport.authenticate('jwt', {session: false}), async (req, res) => {
   await Movies.find()
   .then ((movies) => {
     res.status(200).json(movies);
