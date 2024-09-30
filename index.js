@@ -137,13 +137,22 @@ app.post('/users', [
 });
 
 // UPDATE user's info by username
-app.put('/users/:Username', async (req, res) => {
+app.put('/users/:Username',
+  check('Username', 'Username is required.').isLength({min: 5}),
+  check('Username', 'Username contains non alphanumeric characters - not allowed.').isAlphanumeric(),
+  check('Password', 'Password is required.').not().isEmpty(), 
+  async (req, res) => {
+    let errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array()} );
+    }
+    let hashedPassword = Users.hashPassword(req.body.Password);
   await Users.findOneAndUpdate({ 'Username': req.params.Username }, {
     $set:
     {
       Username: req.body.Username,
       Email: req.body.Email,
-      Password: req.body.Password,
+      Password: hashedPassword,
       Birthday: req.body.Birthday
     }
   },
@@ -154,7 +163,7 @@ app.put('/users/:Username', async (req, res) => {
   })
   .catch((error) => {
     console.error(error);
-    res.status(400).send('User not found.' + error);
+    res.status(400).send('Username not valid.' + error);
   });
 });
 
