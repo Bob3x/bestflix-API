@@ -3,17 +3,16 @@ const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const uuid = require('uuid');
 
-const app = express();
-app.use(express.json());
-app.use(express.urlencoded ({ extended: true }));
 const cors = require('cors');
 app.use(cors());
 let auth = require('./auth.js')(app); 
 const passport = require('passport');
 require('./passport.js');
+const app = express();
+app.use(express.json());
+app.use(express.urlencoded ({ extended: true }));
 app.use(morgan('combined'));        // Morgan middleware to log all requests to the terminal
 app.use(express.static('public'));  // Serve static files from the "public" directory
-
 
 const mongoose = require('mongoose');
 const Models = require('./models.js');
@@ -97,6 +96,7 @@ app.get('/users', async (req, res) => {
 
 // CREATE new user in myFlixDB - MongoDB
 app.post('/users', async (req, res) => {
+  let hashedPassword = Users.hashPassword(req.body.Password);
   await Users.findOne({ 'Username': req.body.Username })
     .then((user) => {
       if (user) {
@@ -107,7 +107,7 @@ app.post('/users', async (req, res) => {
         // If not - create new user
           .create({                                                        
             Username: req.body.Username,
-            Password: req.body.Passowrd,
+            Password: hashedPassword,
             Email: req.body.Email,
             Birthday: req.body.Birthday
           })
