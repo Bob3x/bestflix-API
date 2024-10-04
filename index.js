@@ -2,29 +2,33 @@ const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const uuid = require('uuid');
-
 const cors = require('cors');
-app.use(cors());
-let auth = require('./auth.js')(app); 
 const passport = require('passport');
-require('./passport.js');
-const app = express();
 const { check, validationResult } = require('express-validator');
+
+const app = express();
+
+// Middleware
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded ({ extended: true }));
 app.use(morgan('combined'));        // Morgan middleware to log all requests to the terminal
 app.use(express.static('public'));  // Serve static files from the "public" directory
 
-
+// Database
 const mongoose = require('mongoose');
 const Models = require('./models.js');
 
 const Movies = Models.Movie;
 const Users = Models.User;
-const Genres = Models.Genre;
-const Directors = Models.Director;
+// const Genres = Models.Genre;
+// const Directors = Models.Director;
 
 mongoose.connect('mongodb://localhost:27017/myFlixDB', { useNewUrlParser: true, useUnifiedTopology: true });
+
+// Authentication
+let auth = require('./auth.js')(app); 
+require('./passport.js');
 
 // GET request welcome url
 app.get('/', (req, res) => {
@@ -38,26 +42,28 @@ app.get('/documentation', (req, res) => {
 
 // GET all movies from the database to the user
 app.get('/movies', passport.authenticate('jwt', {session: false}), async (req, res) => {
-  await Movies.find()
-  .then ((movies) => {
+  try {
+    const movies = await Movies.find();
     res.status(200).json(movies);
-  })
-  .catch((err) => {
-  console.error(err);
-  res.status(500).send('Error: ' + err);
-  });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error: ' + err);
+  }
 });
 
 // GET movie by title
 app.get('/movies/:Title', async (req, res) => {
-	await Movies.findOne({ Title: req.params.Title })
-  .then ((movie) => {
+  try {
+	const movie = await Movies.findOne({ Title: req.params.Title });
+  if (movie) {
     res.json(movie)
-  })
-  .catch((err) => {
-    console.error(err);
-    res.status(400).send('Movie not found.' + err);
-  });
+  } else (err) {
+    res.status(404).send('Movie not found.');
+  }
+ } catch (err) {
+  console.error(err);
+  res.status(500).send('Error:' + err);
+ }
 });
 
 // GET movie by director's name
@@ -201,7 +207,7 @@ await Users.findOneAndUpdate({ 'Username': req.params.Username}, {
 // DELETE favorite movie
 app.delete('/users/:Username/movies/:MovieID', async (req, res) => {
 await Users.findOneAndUpdate({Username: req.params.Username}, {
-  $pull: { favoriteMovies: req.params.MovieID }
+  $pull: { FavoriteMovies: req.params.MovieID }
 },
 {new: true})
 .then((updatedUser) => {
