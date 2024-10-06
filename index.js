@@ -24,8 +24,8 @@ const Users = Models.User;
 // const Genres = Models.Genre;
 // const Directors = Models.Director;
 
-// mongoose.connect('mongodb://localhost:27017/myFlixDB', { useNewUrlParser: true, useUnifiedTopology: true });
-mongoose.connect('process.env.CONNECTION_URI', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect('mongodb://localhost:27017/myFlixDB', { useNewUrlParser: true, useUnifiedTopology: true });
+// mongoose.connect('process.env.CONNECTION_URI', { useNewUrlParser: true, useUnifiedTopology: true });
 
 // Authentication
 let auth = require('./auth.js')(app); 
@@ -53,7 +53,7 @@ app.get('/movies', passport.authenticate('jwt', {session: false}), async (req, r
 });
 
 // GET movie by title
-app.get('/movies/:Title', async (req, res) => {
+app.get('/movies/:Title', passport.authenticate('jwt', {session: false}), async (req, res) => {
   try {
     const movie = await Movies.findOne({ Title: req.params.Title });
     if (movie) {
@@ -68,7 +68,7 @@ app.get('/movies/:Title', async (req, res) => {
 });
 
 // GET movie by director's name
-app.get('/movies/Director/:Name', async (req, res) => {
+app.get('/movies/Director/:Name', passport.authenticate('jwt', {session: false}), async (req, res) => {
   try {
     const movie = await Movies.findOne({ 'Director.Name': req.params.Name });
     if (movie) {
@@ -83,7 +83,7 @@ app.get('/movies/Director/:Name', async (req, res) => {
 });
 
 // GET movie by genre
-app.get('/movies/Genre/:Name', async (req, res) => {
+app.get('/movies/Genre/:Name', passport.authenticate('jwt', {session: false}), async (req, res) => {
   try {
     const movie = await Movies.findOne({ 'Genre.Name': req.params.Name });
     if (movie) {
@@ -144,11 +144,14 @@ app.post('/users', [
 });
 
 // UPDATE user's info by username
-app.put('/users/:Username', [
+app.put('/users/:Username', passport.authenticate('jwt', {session: false}), [
   check('Username', 'Username is required').isLength({min: 5}),
   check('Username', 'Username contains non alphanumeric characters - not allowed.').isAlphanumeric(),
   check('Password', 'Password is required').not().isEmpty(),
 ], async (req, res) => {
+  if (req.user.Usernam !== req.params.Username) {
+    return res.status(400).send('Permision denied.');
+  }
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).json({ errors: errors.array() });
@@ -176,7 +179,7 @@ app.put('/users/:Username', [
 });
 
 // DELETE user by username
-app.delete('/users/:Username', async (req, res) => {
+app.delete('/users/:Username', passport.authenticate('jwt', {session: false}), async (req, res) => {
   try {
     const user = await Users.findOneAndRemove({ Username: req.params.Username });
     if (!user) {
@@ -191,7 +194,7 @@ app.delete('/users/:Username', async (req, res) => {
 });
 
 // UPDATE users favorite movies
-app.post('/users/:Username/movies/:MovieID', async (req, res) => {
+app.post('/users/:Username/movies/:MovieID', passport.authenticate('jwt', {session: false}), async (req, res) => {
   try {
     const updatedUser = await Users.findOneAndUpdate(
       { Username: req.params.Username },
@@ -206,7 +209,7 @@ app.post('/users/:Username/movies/:MovieID', async (req, res) => {
 });
 
 // DELETE favorite movie
-app.delete('/users/:Username/movies/:MovieID', async (req, res) => {
+app.delete('/users/:Username/movies/:MovieID', passport.authenticate('jwt', {session: false}), async (req, res) => {
   try {
     const updatedUser = await Users.findOneAndUpdate(
       { Username: req.params.Username },
