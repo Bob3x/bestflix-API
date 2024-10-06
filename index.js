@@ -24,7 +24,8 @@ const Users = Models.User;
 // const Genres = Models.Genre;
 // const Directors = Models.Director;
 
-mongoose.connect('mongodb://localhost:27017/myFlixDB', { useNewUrlParser: true, useUnifiedTopology: true });
+// mongoose.connect('mongodb://localhost:27017/myFlixDB', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect('process.env.CONNECTION_URI', { useNewUrlParser: true, useUnifiedTopology: true });
 
 // Authentication
 let auth = require('./auth.js')(app); 
@@ -54,16 +55,16 @@ app.get('/movies', passport.authenticate('jwt', {session: false}), async (req, r
 // GET movie by title
 app.get('/movies/:Title', async (req, res) => {
   try {
-	const movie = await Movies.findOne({ Title: req.params.Title });
-  if (movie) {
-    res.json(movie)
-  } else (err) {
-    res.status(404).send('Movie not found.');
+    const movie = await Movies.findOne({ Title: req.params.Title });
+    if (movie) {
+      res.json(movie);
+    } else {
+      res.status(404).send('Movie not found.');
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error: ' + err);
   }
- } catch (err) {
-  console.error(err);
-  res.status(500).send('Error:' + err);
- }
 });
 
 // GET movie by director's name
