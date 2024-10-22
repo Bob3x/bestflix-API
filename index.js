@@ -48,7 +48,7 @@ app.get('/documentation', (req, res) => {
 });
 
 // GET all movies from the database to the user
-app.get('/movies', async (req, res) => {
+app.get('/movies', passport.authenticate('jwt', {session: false}), async (req, res) => {
   try {
     const movies = await Movies.find();
     res.status(200).json(movies);
