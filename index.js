@@ -10,8 +10,20 @@ const app = express();
 
 // Middleware
 const cors = require('cors');
-// let allowedOrigins = ['http://localhost:8080', 'http://testsite.com', 'http://localhost:1234', 'https://my-movie-flix.netlify.app'];
-app.use(cors());
+const allowedOrigins = [
+  'http://localhost:8080',
+  'http://localhost:1234', 
+  'https://my-movie-flix.netlify.app'
+];
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      return callback(new Error('CORS policy: Origin not allowed'), false);
+    }
+    return callback(null, true);
+  }
+}));
 
 app.use(express.json());
 app.use(express.urlencoded ({ extended: true }));
