@@ -36,6 +36,7 @@ mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
 // Authentication
 let auth = require('./auth.js')(app); 
 require('./passport.js');
+require('dotenv').config();
 
 // GET request welcome url
 app.get('/', (req, res) => {
