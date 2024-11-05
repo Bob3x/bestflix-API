@@ -38,6 +38,12 @@ let auth = require('./auth.js')(app);
 require('./passport.js');
 require('dotenv').config();
 
+// Check if JWT_SECRET is set
+if (!process.env.JWT_SECRET) {
+  console.error('FATAL ERROR: JWT_SECRET is not defined.');
+  process.exit(1); // Exit the application
+}
+
 // GET request welcome url
 app.get('/', (req, res) => {
   res.send('Welcome to my movie app!');
