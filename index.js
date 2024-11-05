@@ -2,28 +2,11 @@ const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const uuid = require('uuid');
-
 const passport = require('passport');
 const { check, validationResult } = require('express-validator');
 
-const app = express();
 
-// Middleware
-const cors = require('cors');
-const allowedOrigins = [
-  'http://localhost:8080',
-  'http://localhost:1234', 
-  'https://my-movie-flix.netlify.app'
-];
-app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.indexOf(origin) === -1) {
-      return callback(new Error('CORS policy: Origin not allowed'), false);
-    }
-    return callback(null, true);
-  }
-}));
+const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded ({ extended: true }));
@@ -58,6 +41,22 @@ if (!process.env.JWT_SECRET) {
   console.error('FATAL ERROR: JWT_SECRET is not defined.');
   process.exit(1); // Exit the application
 }
+
+const cors = require('cors');
+const allowedOrigins = [
+  'http://localhost:8080',
+  'http://localhost:1234', 
+  'https://my-movie-flix.netlify.app'
+];
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      return callback(new Error('CORS policy: Origin not allowed'), false);
+    }
+    return callback(null, true);
+  }
+}));
 
 // GET request welcome url
 app.get('/', (req, res) => {
