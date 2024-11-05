@@ -133,19 +133,19 @@ app.post('/users', [
     if (user) {
       // If the user already exists 
       return res.status(400).send(req.body.Username + ' already exists');
-    } else {
-      // If not - create new user
+    } 
+
+      // create new user
       const newUser = await Users.create({
         Username: req.body.Username,
         Password: hashedPassword,
-        Email: req.body.Email,
-        Birthday: req.body.Birthday
+        Email: req.body.Email
       });
-      res.status(201).json(newUser);
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('Error: ' + error);
+    
+    res.status(201).json(newUser);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error creating user');
   }
 });
 
@@ -155,7 +155,7 @@ app.put('/users/:Username', passport.authenticate('jwt', {session: false}), [
   check('Username', 'Username contains non alphanumeric characters - not allowed.').isAlphanumeric(),
   check('Password', 'Password is required').not().isEmpty(),
 ], async (req, res) => {
-  if (req.user.Usernam !== req.params.Username) {
+  if (req.user.Username !== req.params.Username) {
     return res.status(400).send('Permision denied.');
   }
   const errors = validationResult(req);
