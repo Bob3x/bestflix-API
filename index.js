@@ -2,14 +2,25 @@ const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const uuid = require('uuid');
-const cors = require('cors');
+
 const passport = require('passport');
 const { check, validationResult } = require('express-validator');
 
 const app = express();
 
 // Middleware
-app.use(cors());
+const cors = require('cors');
+let allowedOrigins = ['http://localhost:8080', 'http://testsite.com', 'http://localhost:1234', 'https://my-movie-flix.netlify.app'];
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      let message = "'The CORS policy for this application doesn’t allow access from origin" + origin;
+      return callback(new Error(message), false);
+  }
+  return callback(null, true);
+}
+}));
 app.use(express.json());
 app.use(express.urlencoded ({ extended: true }));
 app.use(morgan('combined'));        // Morgan middleware to log all requests to the terminal
