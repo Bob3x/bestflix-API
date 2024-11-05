@@ -5,14 +5,6 @@ const uuid = require('uuid');
 const passport = require('passport');
 const { check, validationResult } = require('express-validator');
 
-
-const app = express();
-
-app.use(express.json());
-app.use(express.urlencoded ({ extended: true }));
-app.use(morgan('combined'));        // Morgan middleware to log all requests to the terminal
-app.use(express.static('public'));  // Serve static files from the "public" directory
-
 // Database
 const mongoose = require('mongoose');
 const Models = require('./models.js');
@@ -30,6 +22,14 @@ const uri = `mongodb+srv://${username}:${password}@my-db-cluster.2utmo.mongodb.n
 mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('Connected to MongoDB'))
   .catch(err => console.error('Error connecting to MongoDB:', err));
+
+const app = express();
+
+  app.use(express.json());
+  app.use(express.urlencoded ({ extended: true }));
+  app.use(morgan('combined'));        // Morgan middleware to log all requests to the terminal
+  app.use(express.static('public'));  // Serve static files from the "public" directory
+  
 
 // Authentication
 let auth = require('./auth.js')(app); 
@@ -58,6 +58,7 @@ app.use(cors({
   }
 }));
 
+// ROUTES
 // GET request welcome url
 app.get('/', (req, res) => {
   res.send('Welcome to my movie app!');
