@@ -4,10 +4,13 @@ const bodyParser = require('body-parser');
 const uuid = require('uuid');
 const passport = require('passport');
 const { check, validationResult } = require('express-validator');
-
+const jwt = require('jsonwebtoken');
+const cors = require('cors');
 // Database
 const mongoose = require('mongoose');
 const Models = require('./models.js');
+
+const app = express();
 
 const Movies = Models.Movie;
 const Users = Models.User;
@@ -23,40 +26,47 @@ mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('Connected to MongoDB'))
   .catch(err => console.error('Error connecting to MongoDB:', err));
 
-const app = express();
-
+// Middleware configurations  
   app.use(express.json());
   app.use(express.urlencoded ({ extended: true }));
   app.use(morgan('combined'));        // Morgan middleware to log all requests to the terminal
   app.use(express.static('public'));  // Serve static files from the "public" directory
   
-
-// Authentication
-let auth = require('./auth.js')(app); 
-require('./passport.js');
-require('dotenv').config();
-
-// Check if JWT_SECRET is set
-if (!process.env.JWT_SECRET) {
-  console.error('FATAL ERROR: JWT_SECRET is not defined.');
-  process.exit(1); // Exit the application
-}
-
-const cors = require('cors');
+// CORS configuration
 const allowedOrigins = [
   'http://localhost:8080',
-  'http://localhost:1234', 
+  'http://localhost:1234',
+  'https://my-movies-flix-app-56f9661dc035.herokuapp.com/', 
   'https://my-movie-flix.netlify.app'
 ];
-app.use(cors({
+
+const corsOptions = {
   origin: (origin, callback) => {
-    if (!origin) return callback(null, true);
+    if (!origin) 
+      return callback(null, true);
     if (allowedOrigins.indexOf(origin) === -1) {
       return callback(new Error('CORS policy: Origin not allowed'), false);
     }
     return callback(null, true);
-  }
-}));
+  },
+  credentials: true,
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  allowedHeaders:["Content-Type", "Authorization"]
+};
+app.use(cors(corsOptions));
+
+// Authentication
+require('./passport.js');
+let auth = require('./auth.js')(app); 
+
+
+// require('dotenv').config();
+// Check if JWT_SECRET is set
+/*if (!process.env.JWT_SECRET) {
+  console.error('FATAL ERROR: JWT_SECRET is not defined.');
+  process.exit(1); // Exit the application
+}*/
+
 
 // ROUTES
 // GET request welcome url
@@ -156,7 +166,6 @@ app.post('/users', [
       // If the user already exists 
       return res.status(400).send(req.body.Username + ' already exists');
     } 
-
       // create new user
       const newUser = await Users.create({
         Username: req.body.Username,
