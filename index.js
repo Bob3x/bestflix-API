@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const uuid = require('uuid');
 const passport = require('passport');
 const { check, validationResult } = require('express-validator');
-const jwt = require('jsonwebtoken');
+
 const cors = require('cors');
 // Database
 const mongoose = require('mongoose');
@@ -50,7 +50,7 @@ const corsOptions = {
     return callback(null, true);
   },
   credentials: true,
-  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  methods: "GET, HEAD, PUT, PATCH, POST, DELETE",
   allowedHeaders:["Content-Type", "Authorization"]
 };
 app.use(cors(corsOptions));
