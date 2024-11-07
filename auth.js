@@ -1,7 +1,6 @@
 const jwtSecret = 'your_jwt_secret'; 
-
 const jwt = require('jsonwebtoken'),
-    passport = require('passport');
+passport = require('passport');
 
 require('./passport.js'); 
 
@@ -15,21 +14,35 @@ let generateJWTToken = (user) => {
 
 /* POST login.*/
 module.exports = (router) => {
-    router.post('/login', (req, res) => {
+    router.post('/login', (req, res, next) => {
+        // Validation request body
+        if (!req.body.Username || !req.body.Password) {
+            return res.status(400).json({
+                message: "Username and password are required"
+            });
+        }
+
         passport.authenticate('local', { session: false }, (error, user, info) => {
             if (error || !user) {
-                return res.status(400).json({
-                    message: 'Invalid username or password',
+                return res.status(401).json({
+                    message: 'Something is not right',
                     user: user
                 });
             }
             req.login(user, { session: false }, (error) => {
                 if (error) {
-                    return res.status(500).send(error);
+                    return res.status(500).json({
+                        message: "Login error",
+                        error: error.message
+                });
                 }
-                let token = generateJWTToken(user.toJSON());
-                return res.json({ user, token });
+                let token = generateJWTToken(user);
+                return res.json({ 
+                    user: user,
+                    token: token 
+                });
             });
-        })(req, res);
+        })(req, res, next);
     });
-}
+    return router;
+};
