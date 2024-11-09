@@ -33,7 +33,7 @@ app.get('/movies', passport.authenticate('jwt', {session: false}), async (req, r
     res.status(200).json(movies);
   } catch (err) {
     console.error(err);
-    res.status(500).send('Error: ' + err);
+    res.status(500).json('Error: ' + err);
   }
 });
 
@@ -44,11 +44,11 @@ app.get('/movies/:Title', passport.authenticate('jwt', {session: false}), async 
     if (movie) {
       res.json(movie);
     } else {
-      res.status(404).send('Movie not found.');
+      res.status(404).json('Movie not found.');
     }
   } catch (err) {
     console.error(err);
-    res.status(500).send('Error: ' + err);
+    res.status(500).json('Error: ' + err);
   }
 });
 
@@ -59,11 +59,11 @@ app.get('/movies/Director/:Name', passport.authenticate('jwt', {session: false})
     if (movie) {
       res.json(movie);
     } else {
-      res.status(404).send('Director not found.');
+      res.status(404).json('Director not found.');
     }
   } catch (err) {
     console.error(err);
-    res.status(500).send('Error: ' + err);
+    res.status(500).json('Error: ' + err);
   }
 });
 
@@ -74,11 +74,11 @@ app.get('/movies/Genre/:Name', passport.authenticate('jwt', {session: false}), a
     if (movie) {
       res.json(movie);
     } else {
-      res.status(404).send('Genre not found.');
+      res.status(404).json('Genre not found.');
     }
   } catch (err) {
     console.error(err);
-    res.status(500).send('Error: ' + err);
+    res.status(500).json('Error: ' + err);
   }
 });
 
@@ -90,7 +90,7 @@ app.get('/users', async (req, res) => {
     res.status(200).json(users);
   } catch (err) {
     console.error(err);
-    res.status(500).send('Error: ' + err);
+    res.status(500).json('Error: ' + err);
   }
 });
 
@@ -111,7 +111,7 @@ app.post('/users', [
     const user = await Users.findOne({ Username: req.body.Username });
     if (user) {
       // If the user already exists 
-      return res.status(400).send(req.body.Username + ' already exists');
+      return res.status(400).json(req.body.Username + ' already exists');
     } else {
       // If not - create new user
       const newUser = await Users.create({
@@ -124,7 +124,7 @@ app.post('/users', [
     }
   } catch (error) {
     console.error(error);
-    res.status(500).send('Error: ' + error);
+    res.status(500).json('Error: ' + error);
   }
 });
 
@@ -135,7 +135,7 @@ app.put('/users/:Username', passport.authenticate('jwt', {session: false}), [
   check('Password', 'Password is required').not().isEmpty(),
 ], async (req, res) => {
   if (req.user.Username !== req.params.Username) {
-    return res.status(400).send('Permision denied.');
+    return res.status(400).json('Permision denied.');
   }
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -159,7 +159,7 @@ app.put('/users/:Username', passport.authenticate('jwt', {session: false}), [
     res.json(updatedUser);
   } catch (error) {
     console.error(error);
-    res.status(500).send('Error: ' + error);
+    res.status(500).json('Error: ' + error);
   }
 });
 
@@ -168,13 +168,13 @@ app.delete('/users/:Username', passport.authenticate('jwt', {session: false}), a
   try {
     const user = await Users.findOneAndDelete({ Username: req.params.Username });
     if (!user) {
-      res.status(404).json({req.params.Username + ' was not found'});
+      res.status(404).json({ message: req.params.Username + ' was not found' });
     } else {
-      res.status(200).json({req.params.Username + ' has been deleted'});
+      res.status(200).json({ message: req.params.Username + ' has been deleted' });
     }
   } catch (error) {
     console.error(error);
-    res.status(500).send('Error: ' + error);
+    res.status(500).json('Error: ' + error);
   }
 });
 
@@ -189,7 +189,7 @@ app.post('/users/:Username/movies/:MovieID', passport.authenticate('jwt', {sessi
     res.json(updatedUser);
   } catch (error) {
     console.error(error);
-    res.status(500).send('Error: ' + error);
+    res.status(500).json('Error: ' + error);
   }
 });
 
@@ -204,14 +204,14 @@ app.delete('/users/:Username/movies/:MovieID', passport.authenticate('jwt', {ses
     res.json(updatedUser);
   } catch (error) {
     console.error(error);
-    res.status(500).send('Error: ' + error);
+    res.status(500).json('Error: ' + error);
   }
 });
 
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).send('Something broke!');
+  res.status(500).json('Something broke!');
 });
 
 // listen for requests
