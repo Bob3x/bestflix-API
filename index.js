@@ -106,9 +106,8 @@ app.post('/users', [
   if (!errors.isEmpty()) {
     return res.status(422).json({ errors: errors.array() });
   }
-
-  const hashedPassword = Users.hashPassword(req.body.Password);
   try {
+    const hashedPassword = Users.hashPassword(req.body.Password);
     const user = await Users.findOne({ Username: req.body.Username });
     if (user) {
       // If the user already exists 
@@ -135,7 +134,7 @@ app.put('/users/:Username', passport.authenticate('jwt', {session: false}), [
   check('Username', 'Username contains non alphanumeric characters - not allowed.').isAlphanumeric(),
   check('Password', 'Password is required').not().isEmpty(),
 ], async (req, res) => {
-  if (req.user.Usernam !== req.params.Username) {
+  if (req.user.Username !== req.params.Username) {
     return res.status(400).send('Permision denied.');
   }
   const errors = validationResult(req);
@@ -166,6 +165,9 @@ app.put('/users/:Username', passport.authenticate('jwt', {session: false}), [
 
 // DELETE user by username
 app.delete('/users/:Username', passport.authenticate('jwt', {session: false}), async (req, res) => {
+  if (req.body.Username !== req.params.Username) {
+    return res.status(400).send('Permission denied.');
+  }
   try {
     const user = await Users.findOneAndRemove({ Username: req.params.Username });
     if (!user) {
@@ -197,7 +199,7 @@ app.post('/users/:Username/movies/:MovieID', passport.authenticate('jwt', {sessi
 // DELETE favorite movie
 app.delete('/users/:Username/movies/:MovieID', passport.authenticate('jwt', {session: false}), async (req, res) => {
   try {
-    const updatedUser = await Users.findOneAndUpdate(
+    const updatedUser = await Users.findOneAndDelete(
       { Username: req.params.Username },
       { $pull: { FavoriteMovies: req.params.MovieID } },
       { new: true }
