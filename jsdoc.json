@@ -1,0 +1,24 @@
+{
+    "source": {
+        "include": ["./"],
+        "exclude": ["node_modules", "docs", "test", "package.json", "package-lock.json"],
+        "includePattern": "\\.js$"
+    },
+    "opts": {
+        "destination": "./docs",
+        "recurse": true,
+        "readme": "./README.md"
+    },
+    "plugins": ["plugins/markdown"],
+    "templates": {
+        "cleverLinks": true,
+        "monospaceLinks": true,
+        "default": {
+            "outputSourceFiles": true,
+            "includeDate": false
+        }
+    },
+    "tags": {
+        "allowUnknownTags": true
+    }
+}
