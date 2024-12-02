@@ -1,12 +1,43 @@
-// Middleware
-const morgan = require('morgan');
-const cors = require('cors');
-const express = require('express');
+/**
+ * @module Middleware
+ * @description Express middleware configuration and setup
+ * @requires morgan - HTTP request logger
+ * @requires cors - Cross-Origin Resource Sharing
+ * @requires express - Express framework
+ */
+const morgan = require("morgan");
+const cors = require("cors");
+const express = require("express");
 
-module.exports = (app) =>{
-    app.use(cors());
+/**
+ * Configure and apply middleware to Express app
+ * @function configureMiddleware
+ * @param {Express} app - Express application instance
+ * @description Sets up CORS, body parsing, logging, and static file serving
+ * @example
+ * // In your main app file:
+ * const configureMiddleware = require('./middleware');
+ * configureMiddleware(app);
+ */
+
+module.exports = (app) => {
+    // CORS configuration
+    app.use(
+        cors({
+            origin: [
+                "http://localhost:8080",
+                "http://localhost:1234",
+                "https://my-movies-flix-app-56f9661dc035.herokuapp.com",
+                "https://my-movie-flix.netlify.app"
+            ],
+            credentials: true
+        })
+    );
+    // Request body parsing
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
-    app.use(morgan('combined'));           // Morgan middleware to log all requests to the terminal
-    app.use(express.static('public'));     // Serve static files from the "public" directory
+    // Request logging
+    app.use(morgan("combined"));
+    // Static file serving
+    app.use(express.static("public"));
 };
