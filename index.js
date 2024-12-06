@@ -334,7 +334,7 @@ app.delete(
 
 /**
  * Update Favorite Movies
- * @route POST /users/:Username/movies/:MoviesID
+ * @route POST /users/:Username/movies/:MovieID
  * @async
  * @function
  * @param {Object} req - Express request object
@@ -367,21 +367,46 @@ app.post(
  * @async
  * @function
  * @param {Object} req - Express request object
+ * @param {string} req.params.Username - Username of the user
+ * @param {string} req.params.MovieID - ID of movie to remove from favorites
  * @param {Object} res - Express response object
- * @returns {Promise<Object[]>} Returns message
+ * @returns {Object} Updated user object
+ * @throws {Error} 404 - User not found
  * @throws {Error} 500 - Internal server error if database operation fails
  * @requires authentication - JWT token required
+ * @example
+ * // Request
+ * DELETE /users/johndoe/movies/123456
+ * Headers: {
+ *   "Authorization": "Bearer <jwt-token>"
+ * }
+ *
+ * // Success Response: 200 OK
+ * {
+ *   "Username": "johndoe",
+ *   "Email": "johndoe@email.com",
+ *   "FavoriteMovies": ["789012", "345678"] // MovieID removed
+ * }
+ *
+ * // Error Response: 404 Not Found
+ * {
+ *   "message": "User not found"
+ * }
  */
 app.delete(
     "/users/:Username/movies/:MovieID",
     passport.authenticate("jwt", { session: false }),
     async (req, res) => {
         try {
-            const updatedUser = await Users.findOneAndDelete(
+            const updatedUser = await Users.findOneAndUpdate(
                 { Username: req.params.Username },
                 { $pull: { FavoriteMovies: req.params.MovieID } },
                 { new: true }
             );
+            if (!updatedUser) {
+                res.status(404).json({ message: "User not found" });
+                return;
+            }
             res.json(updatedUser);
         } catch (error) {
             console.error(error);
@@ -398,6 +423,9 @@ app.use((err, req, res, next) => {
 // listen for requests
 const port = process.env.PORT || 8080;
 
-app.listen(port, () => {
-    console.log("Listening on port " + port);
+app.listen(port, "0.0.0.0", () => {
+    console.log(`Server running on port ${port}`);
+    console.log("Database URL:");
+}).on("error", (err) => {
+    console.error("Server failed to start:", err);
 });
