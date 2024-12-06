@@ -32,7 +32,7 @@ module.exports = (app) => {
                 "http://localhost:1234",
                 "http://localhost:4200",
                 "https://my-movies-flix-app-56f9661dc035.herokuapp.com",
-                "https://my-movie-flix.netlify.app"
+                "https://spontaneous-gelato-a5144f.netlify.app"
             ],
             methods: ["GET", "POST", "PUT", "DELETE"],
             allowedHeaders: ["Content-Type", "Authorization"],
