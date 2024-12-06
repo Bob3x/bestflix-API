@@ -46,7 +46,7 @@ const Users = Models.User;
  */
 const username = encodeURIComponent("bob3x");
 const password = encodeURIComponent("lEX6W7KWRvmEKiTL");
-const uri = `mongodb+srv://${username}:${password}@my-db-cluster.2utmo.mongodb.net/myFlixDB?retryWrites=true&w=majority&appName=my-DB-cluster`;*/
+const uri = `mongodb+srv://${username}:${password}@my-db-cluster.2utmo.mongodb.net/myFlixDB?retryWrites=true&w=majority&appName=my-DB-cluster`;
 
 /**
  * Establish MongoDB connection
