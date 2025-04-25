@@ -48,9 +48,15 @@ app.get("/", (req, res) => {
  * @returns {HTML} Documentation page
  * @description Entry point for the Movie API
  */
-app.get("/documentation", (req, res) => {
-    res.sendFile("public/documentation.html", { root: __dirname });
+app.get("/documentation", (_req, res) => {
+    try {
+        res.sendFile("public/documentation.html", { root: __dirname });
+    } catch (error) {
+        console.log("Documentation error:", error);
+        res.status(500).json({ error: "Error serving documentation" });
+    }
 });
+
 /**
  * Get all movies from database
  * @route GET /movies
@@ -87,13 +93,14 @@ app.get("/documentation", (req, res) => {
  *   "error": "Database error message"
  * }
  */
-app.get("/movies", passport.authenticate("jwt", { session: false }), async (req, res) => {
+app.get("/api/movies", passport.authenticate("jwt", { session: false }), async (_req, res) => {
+    // Using _ prefix for unused parameters
     try {
         const movies = await Movies.find();
         res.status(200).json(movies);
     } catch (error) {
-        console.error(error);
-        res.status(500).json("Error: " + error);
+        console.error("Database error:", error);
+        res.status(500).json({ error: "Error fetching movies" });
     }
 });
 
@@ -108,19 +115,23 @@ app.get("/movies", passport.authenticate("jwt", { session: false }), async (req,
  * @throws {Error} 500 - Internal server error if database operation fails
  * @requires authentication - JWT token required
  */
-app.get("/movies/:Title", passport.authenticate("jwt", { session: false }), async (req, res) => {
-    try {
-        const movie = await Movies.findOne({ Title: req.params.Title });
-        if (movie) {
-            res.json(movie);
-        } else {
-            res.status(404).json("Movie not found.");
+app.get(
+    "/api/movies/:Title",
+    passport.authenticate("jwt", { session: false }),
+    async (req, res) => {
+        try {
+            const movie = await Movies.findOne({ Title: req.params.Title });
+            if (movie) {
+                res.json(movie);
+            } else {
+                res.status(404).json("Movie not found.");
+            }
+        } catch (err) {
+            console.error(err);
+            res.status(500).json("Error: " + err);
         }
-    } catch (err) {
-        console.error(err);
-        res.status(500).json("Error: " + err);
     }
-});
+);
 
 /**
  * Single movie by Director's name
@@ -134,7 +145,7 @@ app.get("/movies/:Title", passport.authenticate("jwt", { session: false }), asyn
  * @requires authentication - JWT token required
  */
 app.get(
-    "/movies/Director/:Name",
+    "/api/movies/Director/:Name",
     passport.authenticate("jwt", { session: false }),
     async (req, res) => {
         try {
@@ -163,7 +174,7 @@ app.get(
  * @requires authentication - JWT token required
  */
 app.get(
-    "/movies/Genre/:Name",
+    "/api/movies/Genre/:Name",
     passport.authenticate("jwt", { session: false }),
     async (req, res) => {
         try {
@@ -190,7 +201,7 @@ app.get(
  * @returns {Promise<Object[]>} Array user objects
  * @throws {Error} 500 - Internal server error if database operation fails
  */
-app.get("/users", async (req, res) => {
+app.get("/api/users", async (req, res) => {
     try {
         const users = await Users.find();
         res.status(200).json(users);
@@ -211,7 +222,7 @@ app.get("/users", async (req, res) => {
  * @throws {Error} 500 - Internal server error if database operation fails
  */
 app.post(
-    "/users",
+    "/api/users",
     [
         check("Username", "Username is required").isLength({ min: 5 }),
         check(
@@ -262,7 +273,7 @@ app.post(
  * @requires authentication - JWT token required
  */
 app.put(
-    "/users/:Username",
+    "/api/users/:Username",
     passport.authenticate("jwt", { session: false }),
     [
         check("Username", "Username is required").isLength({ min: 5 }),
@@ -315,7 +326,7 @@ app.put(
  * @requires authentication - JWT token required
  */
 app.delete(
-    "/users/:Username",
+    "/api/users/:Username",
     passport.authenticate("jwt", { session: false }),
     async (req, res) => {
         try {
@@ -344,7 +355,7 @@ app.delete(
  * @requires authentication - JWT token required
  */
 app.post(
-    "/users/:Username/movies/:MovieID",
+    "/api/users/:Username/movies/:MovieID",
     passport.authenticate("jwt", { session: false }),
     async (req, res) => {
         try {
@@ -394,7 +405,7 @@ app.post(
  * }
  */
 app.delete(
-    "/users/:Username/movies/:MovieID",
+    "/api/users/:Username/movies/:MovieID",
     passport.authenticate("jwt", { session: false }),
     async (req, res) => {
         try {
@@ -414,6 +425,13 @@ app.delete(
         }
     }
 );
+
+app.get("*", (req, res) => {
+    if (req.originalUrl.startsWith("/api")) {
+        return res.status(404).json({ error: "API route not found" });
+    }
+    res.sendFile("index.html", { root: __dirname + "/public" });
+});
 
 app.use((err, req, res, next) => {
     console.error(err.stack);
