@@ -62,7 +62,7 @@ let generateJWTToken = (user) => {
  * }
  */
 module.exports = (router) => {
-    router.post("/login", (req, res, next) => {
+    router.post("/api/login", (req, res, next) => {
         // Validation request body
         if (!req.body.Username || !req.body.Password) {
             return res.status(400).json({
