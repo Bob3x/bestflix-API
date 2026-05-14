@@ -1,19 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Documentation</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid black;
+        }
+    </style>
 </head>
-<body>
+
+<table>
     <h1>Documentation Page</h1>
     <p>Movie application <br> <strong>"myFlix"</strong><br>
-         project description: </p>
-    <p> Web application provides the users with list of movies to choose from. Organized in few main categories with option to create <br>
-    custom list. Information about movies, generes, actors and more will be accessable as well. Users are able to log-in with personal information <br>
-    and update it any time. </p>
+        project description: </p>
+    <p> Web application provides the users with list of movies to choose from. Organized in few main categories with
+        option to create <br>
+        custom list. Information about movies, generes, actors and more will be accessable as well. Users are able to
+        log-in with personal information <br>
+        and update it any time. </p>
     <h2>API Endpoints</h2>
-    <table border="1">
+    <table>
         <thead>
             <tr>
                 <th>Request</th>
@@ -25,10 +41,10 @@
                 <th>Response</th>
             </tr>
         </thead>
-        <tbody>                       
+        <tbody>
             <tr> <!-- Get all movies -->
                 <td>Get all movies to the user</td>
-                <td>/movies</td>
+                <td>/api/movies</td>
                 <td>Returns a list of all movies to the user</td>
                 <td>GET</td>
                 <td>None</td>
@@ -37,7 +53,7 @@
             </tr>
             <tr> <!-- Get movie by title -->
                 <td>Get movie by title</td>
-                <td>/movies/:Title</td>
+                <td>/api/movies/:Title</td>
                 <td>Returns movie by title.</td>
                 <td>GET</td>
                 <td>title (URL parameter)</td>
@@ -45,23 +61,23 @@
             </tr>
             <tr> <!-- Get movie by director's name -->
                 <td>Get movie by director's name</td>
-                <td>movies/Director/:Name</td>
+                <td>/api/movies/Director/:Name</td>
                 <td>Return movies by director's name</td>
                 <td>GET</td>
                 <td>movie's director's name (URL parameter)</td>
                 <td>None</td>
             </tr>
-              <tr> <!-- Get movie by genre -->
+            <tr> <!-- Get movie by genre -->
                 <td>Get movie by genre </td>
                 <td>/movies/Genre/:Name</td>
                 <td>Return movie by genre</td>
                 <td>GET</td>
                 <td>movies genre's name (URL parameter)</td>
                 <td>None</td>
-            </tr>     
+            </tr>
             <tr> <!-- Register User -->
                 <td>Register new user</td>
-                <td>/users</td>
+                <td>/api/users</td>
                 <td>Allows a new user to register</td>
                 <td>POST</td>
                 <td>None</td>
@@ -70,7 +86,7 @@
             </tr>
             <tr> <!-- Update user -->
                 <td>Update exsiting user's info - username</td>
-                <td>/users/:Username</td>
+                <td>/api/users/:Username</td>
                 <td>Allows a user to update their personal information - username</td>
                 <td>PUT</td>
                 <td>username (URL parameter)</td>
@@ -79,7 +95,7 @@
             </tr>
             <tr> <!-- Delete user -->
                 <td>Deregister exsiting user</td>
-                <td>/users/:Username</td>
+                <td>/api/users/:Username</td>
                 <td>Allows an existing user to deregister</td>
                 <td>DELETE</td>
                 <td>username (URL parameter)</td>
@@ -88,7 +104,7 @@
             </tr>
             <tr> <!-- Add movie to favorite movies -->
                 <td>Add movie to user's favorite movies</td>
-                <td>/users/:Username/movies/:MovieID</td>
+                <td>/api/users/:Username/movies/:MovieID</td>
                 <td>Add a movie to a user's favorite movies</td>
                 <td>POST</td>
                 <td>user name (URL parameter)</td>
@@ -97,7 +113,7 @@
             </tr>
             <tr> <!-- Remove movie from favorite movies -->
                 <td>Remove movie from users's favorite movies</td>
-                <td>/users/:Username/movies/:MovieID</td>
+                <td>/api/users/:Username/movies/:MovieID</td>
                 <td>Remove a movie from favorite movies</td>
                 <td>DELETE</td>
                 <td>movie title (URL parameter)</td>
@@ -106,5 +122,6 @@
             </tr>
         </tbody>
     </table>
-</body>
+    </body>
+
 </html>

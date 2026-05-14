@@ -28,46 +28,91 @@
         <article>
             <pre class="prettyprint source linenums"><code>/**
  * @module Middleware
- * @description Express middleware configuration and setup
- * @requires morgan - HTTP request logger
- * @requires cors - Cross-Origin Resource Sharing
+ * @description Express middleware configuration and setup for Movie API
+ * @requires morgan - HTTP request logger middleware
+ * @requires cors - Cross-Origin Resource Sharing middleware
  * @requires express - Express framework
  */
 const morgan = require("morgan");
 const cors = require("cors");
 const express = require("express");
 
+const defaultOrigins = [
+    "http://localhost:8080",
+    "http://localhost:1234",
+    "http://localhost:4200",
+    "https://spontaneous-gelato-a5144f.netlify.app",
+    "https://papaya-naiad-bfbccf.netlify.app",
+    "https://my-movie-flix.netlify.app"
+];
+
+const isLocalOrigin = (origin) => /^https?:\/\/(localhost|127\\.0\\.0\\.1)(:\\d+)?$/.test(origin);
+
+const configuredOrigins = (process.env.CORS_ORIGINS || "")
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+
+const allowedOrigins = Array.from(
+    new Set([
+        ...(process.env.FRONTEND_URL ? [process.env.FRONTEND_URL.trim()] : []),
+        ...configuredOrigins,
+        ...defaultOrigins
+    ])
+);
+
 /**
  * Configure and apply middleware to Express app
  * @function configureMiddleware
  * @param {Express} app - Express application instance
- * @description Sets up CORS, body parsing, logging, and static file serving
- * @example
- * // In your main app file:
- * const configureMiddleware = require('./middleware');
- * configureMiddleware(app);
+ * @description Sets up middleware chain for request processing:
+ * - Request logging (morgan)
+ * - CORS handling
+ * - Body parsing
+ * - Static file serving
+ * - Error handling
  */
-
 module.exports = (app) => {
+    // Request logging
+    app.use(morgan("dev"));
+
     // CORS configuration
     app.use(
         cors({
-            origin: [
-                "http://localhost:8080",
-                "http://localhost:1234",
-                "https://my-movies-flix-app-56f9661dc035.herokuapp.com",
-                "https://my-movie-flix.netlify.app"
-            ],
+            origin(origin, callback) {
+                if (!origin || allowedOrigins.includes(origin) || isLocalOrigin(origin)) {
+                    callback(null, true);
+                    return;
+                }
+
+                callback(new Error(`CORS blocked origin: ${origin}`));
+            },
+            methods: ["GET", "POST", "PUT", "DELETE"],
+            allowedHeaders: ["Content-Type", "Authorization"],
             credentials: true
         })
     );
+
     // Request body parsing
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
-    // Request logging
-    app.use(morgan("combined"));
+
     // Static file serving
     app.use(express.static("public"));
+
+    /**
+     * Error handling middleware
+     * @function errorHandler
+     * @param {Error} err - Error object
+     * @param {Request} _req - Express request object (unused)
+     * @param {Response} res - Express response object
+     * @param {NextFunction} _next - Express next function (unused)
+     * @returns {Response} Error response
+     */
+    app.use((err, _req, res, _next) => {
+        console.error(err.stack);
+        res.status(500).json({ error: err.message, stack: err.stack });
+    });
 };
 </code></pre>
         </article>
@@ -79,7 +124,7 @@ module.exports = (app) => {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Authentication.html">Authentication</a></li><li><a href="module-Database%2520Models.html">Database Models</a></li><li><a href="module-Middleware.html">Middleware</a></li><li><a href="module-MongoDBConnection.html">MongoDBConnection</a></li><li><a href="module-MovieAPI.html">MovieAPI</a></li><li><a href="module-PassportAuth.html">PassportAuth</a></li><li><a href="module-%257BObject%257D.html">{Object}</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Authentication.html">Authentication</a></li><li><a href="module-Database.html">Database</a></li><li><a href="module-Database%2520Models.html">Database Models</a></li><li><a href="module-Middleware.html">Middleware</a></li><li><a href="module-MongoDBConnection.html">MongoDBConnection</a></li><li><a href="module-PassportAuth.html">PassportAuth</a></li></ul>
 </nav>
 
 <br class="clear">

@@ -9,6 +9,30 @@ const morgan = require("morgan");
 const cors = require("cors");
 const express = require("express");
 
+const defaultOrigins = [
+    "http://localhost:8080",
+    "http://localhost:1234",
+    "http://localhost:4200",
+    "https://spontaneous-gelato-a5144f.netlify.app",
+    "https://papaya-naiad-bfbccf.netlify.app",
+    "https://my-movie-flix.netlify.app"
+];
+
+const isLocalOrigin = (origin) => /^https?:\/\/(localhost|127\\.0\\.0\\.1)(:\\d+)?$/.test(origin);
+
+const configuredOrigins = (process.env.CORS_ORIGINS || "")
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+
+const allowedOrigins = Array.from(
+    new Set([
+        ...(process.env.FRONTEND_URL ? [process.env.FRONTEND_URL.trim()] : []),
+        ...configuredOrigins,
+        ...defaultOrigins
+    ])
+);
+
 /**
  * Configure and apply middleware to Express app
  * @function configureMiddleware
@@ -27,14 +51,14 @@ module.exports = (app) => {
     // CORS configuration
     app.use(
         cors({
-            origin: [
-                "http://localhost:8080",
-                "http://localhost:1234",
-                "http://localhost:4200",
-                "https://my-movies-flix-app-56f9661dc035.herokuapp.com",
-                "https://spontaneous-gelato-a5144f.netlify.app",
-                "https://papaya-naiad-bfbccf.netlify.app"
-            ],
+            origin(origin, callback) {
+                if (!origin || allowedOrigins.includes(origin) || isLocalOrigin(origin)) {
+                    callback(null, true);
+                    return;
+                }
+
+                callback(new Error(`CORS blocked origin: ${origin}`));
+            },
             methods: ["GET", "POST", "PUT", "DELETE"],
             allowedHeaders: ["Content-Type", "Authorization"],
             credentials: true
@@ -59,6 +83,6 @@ module.exports = (app) => {
      */
     app.use((err, _req, res, _next) => {
         console.error(err.stack);
-        res.status(500).send("Something broke!");
+        res.status(500).json({ error: err.message, stack: err.stack });
     });
 };

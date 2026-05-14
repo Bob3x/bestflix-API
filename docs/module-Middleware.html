@@ -38,7 +38,7 @@
     <div class="container-overview">
     
         
-            <div class="description"><p>Express middleware configuration and setup</p></div>
+            <div class="description"><p>Express middleware configuration and setup for Movie API</p></div>
         
 
         
@@ -162,7 +162,14 @@
 
 
 <div class="description">
-    <p>Sets up CORS, body parsing, logging, and static file serving</p>
+    <p>Sets up middleware chain for request processing:</p>
+<ul>
+<li>Request logging (morgan)</li>
+<li>CORS handling</li>
+<li>Body parsing</li>
+<li>Static file serving</li>
+<li>Error handling</li>
+</ul>
 </div>
 
 
@@ -255,7 +262,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="middleware.js.html">middleware.js</a>, <a href="middleware.js.html#line12">line 12</a>
+        <a href="middleware.js.html">middleware.js</a>, <a href="middleware.js.html#line36">line 36</a>
     </li></ul></dd>
     
 
@@ -284,9 +291,232 @@
 
 
 
-    <h5>Example</h5>
+
+        
+            
+
     
-    <pre class="prettyprint"><code>// In your main app file:const configureMiddleware = require('./middleware');configureMiddleware(app);</code></pre>
+
+    
+    <h4 class="name" id="~errorHandler"><span class="type-signature">(inner) </span>errorHandler<span class="signature">(err, _req, res, _next)</span><span class="type-signature"> &rarr; {Response}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Error handling middleware</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>err</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Error</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Error object</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>_req</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Request</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Express request object (unused)</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>res</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Response</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Express response object</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>_next</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">NextFunction</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Express next function (unused)</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="middleware.js.html">middleware.js</a>, <a href="middleware.js.html#line75">line 75</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>Error response</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Response</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
 
 
 
@@ -306,7 +536,7 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Authentication.html">Authentication</a></li><li><a href="module-Database%2520Models.html">Database Models</a></li><li><a href="module-Middleware.html">Middleware</a></li><li><a href="module-MongoDBConnection.html">MongoDBConnection</a></li><li><a href="module-MovieAPI.html">MovieAPI</a></li><li><a href="module-PassportAuth.html">PassportAuth</a></li><li><a href="module-%257BObject%257D.html">{Object}</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Authentication.html">Authentication</a></li><li><a href="module-Database.html">Database</a></li><li><a href="module-Database%2520Models.html">Database Models</a></li><li><a href="module-Middleware.html">Middleware</a></li><li><a href="module-MongoDBConnection.html">MongoDBConnection</a></li><li><a href="module-PassportAuth.html">PassportAuth</a></li></ul>
 </nav>
 
 <br class="clear">

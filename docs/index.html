@@ -43,23 +43,23 @@
 
 
     <section>
-        <article><h1>Movie API</h1>
-<p>A RESTful API for managing a movie database with user authentication and authorization.</p>
+        <article><h1>Bestflix API</h1>
+<p>A RESTful API for the Bestflix frontend with JWT authentication, Neon-backed profiles and favorites, and a movie catalog served from the existing export.</p>
 <h2>Features</h2>
 <ul>
-<li>User athentication and authorization using JWT</li>
-<li>Movie information management (CRUD operations)</li>
+<li>User authentication and authorization using JWT</li>
+<li>Movie catalog lookups for the frontend</li>
 <li>User profile management</li>
-<li>Favorite movies list per user</li>
-<li>Cross-Origin Resourse Sharing (CORS) enabled</li>
+<li>Favorite movies per user stored in Neon</li>
+<li>Cross-Origin Resource Sharing (CORS) enabled</li>
 <li>API documentation using JSDoc</li>
 </ul>
 <h2>Technologies</h2>
 <ul>
 <li>Node.js</li>
 <li>Express.js</li>
-<li>MongoDB &amp; Mongoose</li>
-<li>Passport.js (JWT &amp; Local Strategy)</li>
+<li>PostgreSQL / Neon</li>
+<li>Passport.js (JWT)</li>
 <li>JSDoc for documentation</li>
 </ul>
 <h2>Installation</h2>
@@ -76,28 +76,61 @@
 <ol start="3">
 <li>Create a .env file with:</li>
 </ol>
-<pre class="prettyprint source lang-bash"><code>CONNECTION_URI=your_mongodb_connection_string
+<pre class="prettyprint source lang-bash"><code>DATABASE_URL=your_neon_connection_string
 JWT_SECRET=your_jwt_secret
+FRONTEND_URL=https://your-bestflix-react-app.netlify.app
 </code></pre>
-<p>4.Start the server:</p>
+<ol start="4">
+<li>Start the server:</li>
+</ol>
 <pre class="prettyprint source lang-bash"><code>npm start
 </code></pre>
+<h2>Current Project Status</h2>
+<ul>
+<li><strong>Active server files:</strong> <code>neonServer.js</code>, <code>neonAuth.js</code>, <code>neonPassport.js</code>, <code>neonDatabase.js</code>, <code>middleware.js</code>, <code>index.js</code></li>
+<li><strong>Archived legacy files:</strong> moved to <code>_Archived/</code> to keep the repo tidy (these contain the previous MongoDB/Mongoose implementation): <code>auth.js</code>, <code>database.js</code>, <code>models.js</code>, <code>passport.js</code>, <code>routes/movies.js</code>, <code>routes/users.js</code>.</li>
+</ul>
+<p>If you need to inspect the older MongoDB-based implementation, see the <code>_Archived/</code> folder.</p>
+<h2>Regenerating Documentation</h2>
+<p>The <code>docs/</code> folder contains JSDoc-generated HTML from an earlier version of the project. Some pages document archived files.</p>
+<p>To regenerate up-to-date docs for the current codebase (requires <code>jsdoc</code>):</p>
+<pre class="prettyprint source lang-bash"><code>npm install
+npm run docs
+</code></pre>
+<p>After running <code>npm run docs</code>, open <code>docs/index.html</code> in your browser to view the documentation.</p>
+<h2>Environment Variables (summary)</h2>
+<ul>
+<li><code>DATABASE_URL</code> — Neon/Postgres connection string used by <code>neonDatabase.js</code></li>
+<li><code>JWT_SECRET</code> — Secret for signing JWTs</li>
+<li><code>FRONTEND_URL</code> — Allowed frontend origin for CORS</li>
+<li>Frontend apps should use <code>REACT_APP_API_URL</code> pointing to this API (e.g. <code>http://localhost:3001</code>)</li>
+</ul>
 <h2>API Endpoints</h2>
 <h3>Movies</h3>
 <ul>
-<li><code>GET /movies</code> - Get all movies (requires authentication)</li>
-<li><code>GET /movies/:id</code> - Get movie by ID</li>
-<li><code>POST /movies</code> - Add new movie (admin only)</li>
-<li><code>PUT /movies/:id</code> - Update movie (admin only)</li>
-<li><code>DELETE /movies/:id</code> - Delete movie (admin only)</li>
+<li><code>GET /api/movies</code> - Get all movies (requires authentication)</li>
+<li><code>GET /api/movies/:Title</code> - Get movie by title</li>
+<li><code>GET /api/movies/Director/:Name</code> - Get movie by director</li>
+<li><code>GET /api/movies/Genre/:Name</code> - Get movie by genre</li>
+</ul>
+<h3>Auth</h3>
+<ul>
+<li><code>POST /api/auth/signup</code> - Register new user</li>
+<li><code>POST /api/auth/login</code> - User login</li>
+<li><code>POST /api/auth/logout</code> - User logout</li>
 </ul>
 <h3>Users</h3>
 <ul>
-<li><code>POST /user</code> - Register new user</li>
-<li><code>POST /login</code> - User login</li>
-<li><code>PUT /users/:Username</code> - Update user info</li>
-<li><code>POST /users/:Username/movies/:MovieID</code> - Add favorite movie</li>
-<li><code>DELETE /users/:Username/movies/:MovieID</code> - Remove favorite movie</li>
+<li><code>GET /api/users</code> - List users</li>
+<li><code>GET /api/users/:identifier</code> - Get the signed-in user profile</li>
+<li><code>PUT /api/users/:identifier</code> - Update user info</li>
+<li><code>DELETE /api/users/:identifier</code> - Delete user profile</li>
+</ul>
+<h3>Favorites</h3>
+<ul>
+<li><code>GET /api/favorites/:userId</code> - List favorites for a user</li>
+<li><code>POST /api/favorites</code> - Add a favorite movie</li>
+<li><code>DELETE /api/favorites</code> - Remove a favorite movie</li>
 </ul>
 <h3>Scripts</h3>
 <ul>
@@ -109,7 +142,7 @@ JWT_SECRET=your_jwt_secret
 <h3>Production</h3>
 <ul>
 <li>express - Web framework</li>
-<li>mongoose - MongoDB ODM</li>
+<li>pg - PostgreSQL client for Neon</li>
 <li>passport - Authentication</li>
 <li>jsonwebtoken - JWT implementation</li>
 <li>bcrypt - Password hashing</li>
@@ -139,7 +172,7 @@ JWT_SECRET=your_jwt_secret
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Authentication.html">Authentication</a></li><li><a href="module-Database%2520Models.html">Database Models</a></li><li><a href="module-Middleware.html">Middleware</a></li><li><a href="module-MongoDBConnection.html">MongoDBConnection</a></li><li><a href="module-MovieAPI.html">MovieAPI</a></li><li><a href="module-PassportAuth.html">PassportAuth</a></li><li><a href="module-%257BObject%257D.html">{Object}</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Authentication.html">Authentication</a></li><li><a href="module-Database.html">Database</a></li><li><a href="module-Database%2520Models.html">Database Models</a></li><li><a href="module-Middleware.html">Middleware</a></li><li><a href="module-MongoDBConnection.html">MongoDBConnection</a></li><li><a href="module-PassportAuth.html">PassportAuth</a></li></ul>
 </nav>
 
 <br class="clear">
